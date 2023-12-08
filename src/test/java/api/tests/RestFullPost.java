@@ -21,25 +21,24 @@ public class RestFullPost {
     @Test(description = "Test with year 2000", dataProvider = "data-provider", dataProviderClass = Testdata.class)
     public void testResponse(String desc, int year, double price, String modal, String size) throws IOException {
         // String url = "https://api.restful-api.dev/objects";
-        String url = Constants.BASE_URL;
-        String jsonFilePath = Constants.PAYLOAD_PATH;
-        String payload = baseAPI.getUpdatedPayload(jsonFilePath, year, price, modal, size);
-        Response response = baseAPI.getResponse(url, payload);
-
-        //print response
-        // System.out.println("response " + response.getBody().asString());
+        final String url = Constants.BASE_URL;
+        final String jsonFilePath = Constants.PAYLOAD_PATH;
+        final String payload = baseAPI.getUpdatedPayload(jsonFilePath, year, price, modal, size);
+       // System.out.println(payload);
+        Response response = baseAPI.getPostResponse(url, payload);
 
         Assert.assertEquals(response.getStatusCode(), 200);
 
-        int getYear = response.path("data.year");
+        final int getYear = response.path("data.year");
 
-        float getpriceApi = response.path("data.price");
+        final float getpriceApi = response.path("data.price");
+
         //this is for round the decimal value has to go in until
-
         DecimalFormat df = new DecimalFormat("#.##");
-        float getprice = Float.parseFloat(df.format(getpriceApi));
-        float expPrice = Float.parseFloat(df.format(price));
+        final float getprice = Float.parseFloat(df.format(getpriceApi));
+        final float expPrice = Float.parseFloat(df.format(price));
 
+        // test condition validations using data provider
         Assert.assertEquals(getYear, year);
         Assert.assertEquals(getprice, expPrice, "eronh");
         Assert.assertEquals(response.jsonPath().getString("data.'CPU model'"), modal);
