@@ -30,7 +30,6 @@ public class RestFullPost {
         Assert.assertEquals(response.getStatusCode(), 200);
 
         final int getYear = response.path("data.year");
-
         final float getpriceApi = response.path("data.price");
 
         //this is for round the decimal value has to go in until
