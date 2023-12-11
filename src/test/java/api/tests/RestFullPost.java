@@ -8,6 +8,7 @@ import api.Helper.Constants;
 import api.base.BaseAPI;
 import api.dataProvider.Testdata;
 import api.pojos.PostClass;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -19,7 +20,7 @@ public class RestFullPost {
     BaseAPI baseAPI = new BaseAPI();
 
     @Test(description = "Test with year 2000", dataProvider = "data-provider", dataProviderClass = Testdata.class)
-    public void testResponse(String desc, int year, double price, String modal, String size) throws IOException {
+    public void testResponse(String desc, int year, double price, String modal, String size) throws IOException, ProcessingException {
         // String url = "https://api.restful-api.dev/objects";
         final String url = Constants.BASE_URL;
         final String jsonFilePath = Constants.PAYLOAD_PATH;
@@ -28,7 +29,12 @@ public class RestFullPost {
         Response response = baseAPI.getPostResponse(url, payload);
 
         Assert.assertEquals(response.getStatusCode(), 200);
+        //Schema validation
+        final String schemaPath = Constants.SCHEMA_PATH;
+        final String getResponse = response.getBody().asString();
+        baseAPI.ValidateResponseSchema(getResponse, schemaPath);
 
+        //functional validation
         final int getYear = response.path("data.year");
         final float getpriceApi = response.path("data.price");
 
